@@ -1,89 +1,47 @@
-# CTI Automation Chain Architecture
+# Chain operations
 
-## Overview
+The repository retains 44 source prompts attributed in their original documents. The YAML chains schedule 31 of them: R1 intelligence (10), R2 detection (8), R3 automation (7), and R4 response (6). The browser workbench is a separate prompt preparation interface; it does not execute this chain.
 
-The CTI Automation Chain implements the Feedly CTI Prompt Library as an executable, chained automation pipeline. Each stage consumes the previous stage's output and produces structured artifacts for the next stage.
+## Prepare and run
 
-## Chain Flow
+Use Python 3.10+ and install `requirements.txt` in a virtual environment. Run from the repository root:
 
-```
-R1: Intelligence Analysis
-    │
-    ├── Diamond Model (R1.01) ──▶ Core analysis framework
-    ├── Actor-TTP Mapping (R1.05) ──▶ Actor→TTP relationships
-    ├── Actor Profiles (R1.12) ──▶ Comprehensive actor dossiers
-    ├── Red Team Plans (R1.02) ──▶ Emulation plans
-    ├── Attack Flows (R1.03) ──▶ Visual attack chains
-    ├── Hunt Hypotheses (R1.04) ──▶ Threat hunting kickoff
-    ├── Vuln Assessment (R1.06) ──▶ Prioritized vulnerabilities
-    ├── CVE Chaining (R1.07) ──▶ Exploit chains
-    ├── Industry Reports (R1.10) ──▶ Sector-specific briefs
-    ├── Vuln Advisories (R1.11) ──▶ Actionable advisories
-    └── Actor Profiles (R1.12) ──▶ Comprehensive dossiers
-            │
-            ▼
-R2: Detection Engineering
-    │
-    ├── QA/Audit (R2.01) ──▶ Validate R1 outputs
-    ├── Sentinel KQL (R2.04) ──▶ Microsoft Sentinel queries
-    ├── Splunk SPL (R2.05) ──▶ Splunk queries
-    ├── Validation Handoff (R2.06) ──▶ TTP→Detection mapping
-    ├── Hunt Leads (R2.07) ──▶ Prioritized hunt leads
-    ├── Hunt Coverage (R2.08) ──▶ Coverage gap analysis
-    ├── Threat Trends (R2.09) ──▶ Trend identification
-    └── Threat Assessment (R2.11) ──▶ Structured assessment
-            │
-            ▼
-R3: Workflow Automation
-    │
-    ├── IOC Extract/Enrich (R3.01) ──▶ Structured IOCs
-    ├── ATT&CK Navigator (R3.02) ──▶ Navigator layers
-    ├── Sigma Rules (R3.06) ──▶ Sigma YAML rules
-    ├── Sigma Adapter (R3.05) ──▶ Multi-SIEM formats
-    ├── Hunt Hypotheses (R3.07) ──▶ Hunt packages
-    ├── Control Gaps (R3.04) ──▶ Defense gaps
-    └── Awareness Briefs (R3.08) ──▶ Stakeholder comms
-            │
-            ▼
-R4: Response & Reporting
-    │
-    ├── Triage (R4.01) ──▶ Priority + audit record
-    ├── Multi-feed Consolidation (R4.02) ──▶ Consolidated view
-    ├── SITREP (R4.07) ──▶ Iterative incident reports
-    ├── Executive Brief (R4.08) ──▶ Board-ready briefs
-    ├── Tabletop Exercise (R4.09) ──▶ Training scenarios
-    └── Resilience Gap (R4.10) ──▶ Gap assessment
+```bash
+.venv/bin/python scripts/run_chain.py --chain full --input examples/intel-report.md --output output --dry-run
 ```
 
-## Data Flow
+Inspect the prepared Markdown files before removing `--dry-run`. A live run invokes `opencode run --format json` once per scheduled prompt, using the provider configured in OpenCode. The subprocess runs from the repository root. Review its OpenCode configuration and permissions before execution. No tool permissions are automatically granted by this runner. Use a small, approved input first; 31 sequential model requests can incur costs.
 
-Each stage:
-1. **Consumes** previous stage's combined output
-2. **Executes** multiple prompts in dependency order
-3. **Produces** structured artifacts (markdown, YAML, JSON, KQL, SPL)
-4. **Validates** outputs against schemas
-5. **Passes** combined output to next stage
+Stage dependencies are checked before any model call. Prompts within a stage are ordered by dependencies; R4 executive briefing runs before the situation report that consumes it. R3 awareness now uses intelligence and current Sigma drafts instead of an unavailable future R4 briefing.
 
-## Prompt Chaining
+Each prompt receives the current stage evidence and its explicitly named dependency outputs. The original input feeds R1; later stages receive the previous stage's combined draft output. Generated content remains unverified and can propagate errors, so review the output before operational use.
 
-Each prompt receives:
-- **Static variables**: sector, region, stakeholders, job_role
-- **Dynamic variables**: outputs from previous prompts in same chain
-- **Chain inputs**: outputs from previous chain stages
+## Outputs and failures
 
-Variables are rendered into prompt templates before execution.
+`--output` chooses the parent folder. Each invocation creates a unique timestamp/ID directory. Individual responses are persisted as `.md`, even when they contain embedded JSON, YAML, KQL or SPL blocks. Extract and review those blocks separately before format-specific validation or deployment.
 
-## Validation
+`manifest.json` records completed artifacts and one of `running`, `dry-run`, `complete`, or `failed`. A failed model call stops execution, preserves completed files, and exits nonzero. There is no automatic resume or retry. A new invocation creates a new directory. Nonzero exit, missing executable, timeout, malformed events and empty responses are failures. Prompts over 60 KB are rejected before launching OpenCode.
 
-Each stage validates:
-- Required outputs present
-- Confidence thresholds met
-- Schema compliance (Sigma, KQL, SPL)
-- No hallucination indicators
+## Individual stages
 
-## Extensibility
+Both `--chain r1` and `--chain r1_intel` work. The wrapper also supports:
 
-- Add new prompts to `prompts/r{1-4}/`
-- Define new chains in `chains/{name}/chain.yaml`
-- Add custom validators in `chains/{name}/validators/`
-- Extend output formats in stage configs
+```bash
+.venv/bin/python scripts/run_stage.py r1 --input examples/intel-report.md --output output --dry-run
+```
+
+Later standalone stages require `--context context.json`, a JSON object mapping dependency names listed in the selected chain YAML to reviewed text. Missing dependencies are reported before execution. `--stage-only r1` is a compatibility alias. Do not invent empty context to bypass a missing prerequisite.
+
+## Review dashboard and Elasticsearch
+
+```bash
+.venv/bin/python scripts/validate_output.py --path output/RUN_DIRECTORY
+.venv/bin/python scripts/generate_dashboard.py --path output/RUN_DIRECTORY --output dashboards/review.html
+.venv/bin/python scripts/import_to_elk.py --path output/RUN_DIRECTORY --dry-run
+```
+
+The local HTML dashboard provides actual file counts and expandable escaped text. It replaces the broken prototype Kibana export; it is **not a Kibana saved object**. Syntax validation checks nonempty text, JSON parsing and YAML mappings. It does not validate Sigma schema, query correctness, ATT&CK mappings or factual accuracy.
+
+For an approved Elasticsearch import, set `ELK_API_KEY` using your secret manager and provide `--host https://YOUR_HOST:9200`. The importer validates all files before sending, uses verified TLS by default, refuses redirects and uses deterministic document IDs. Reimporting the same relative path overwrites that document; distinct runs with identical relative paths also overwrite it in the same index. Select different index names when retaining separate runs.
+
+The importer stores Markdown, YAML/YML, `.kql` and `.spl` as text documents. JSON manifests are not imported. It does not deploy detections. Here `.kql` means Microsoft Sentinel Kusto query text, not Elastic Kibana Query Language. Partial network failures exit nonzero and report the count already indexed. There is no rollback. The legacy `--all` flag is accepted; all supported types are already the default.

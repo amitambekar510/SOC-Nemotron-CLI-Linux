@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+!.env.example
+/opencode.json
+/evidence/
+/outputs/
+
+/.venv/
+/config.yaml
+/output/
+/dashboards/
