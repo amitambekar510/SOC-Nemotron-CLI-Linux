@@ -43,7 +43,7 @@ chain:
       file: "prompts/r3/R3-08-stakeholder-awareness-brief.md"
       name: "Stakeholder Awareness Brief"
       output_key: "awareness_brief"
-      depends_on: ["r1_intelligence", "r4_executive_brief"]
+      depends_on: ["r1_intelligence", "sigma_rules"]
 
   output:
     combined: true

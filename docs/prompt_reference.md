@@ -112,7 +112,9 @@ All prompts support these standard variables:
 
 ---
 
-## Validation Rules
+## Analyst validation targets
+
+The table below describes manual review goals, not implemented automated validators. `validate_output.py` checks basic file syntax only. The chain stores responses as Markdown; listed output formats may appear inside those responses.
 
 | Stage | Validators |
 |-------|------------|
@@ -123,14 +125,6 @@ All prompts support these standard variables:
 
 ---
 
-## Chain Dependencies
+## Chain dependencies
 
-```
-R1 (Intel) ──▶ R2 (Detection) ──▶ R3 (Automate) ──▶ R4 (Respond)
-     │              │                │                │
-     └──────────────┴────────────────┴────────────────┘
-                    │
-                    ▼
-            Combined Output
-            (all artifacts)
-```
+R1 intelligence feeds R2 detection, then R3 automation and R4 response. Explicit dependencies in `chains/*/chain.yaml` determine the prompt order and forwarded context. See [chain operations](chain_architecture.md) for execution and output handling.

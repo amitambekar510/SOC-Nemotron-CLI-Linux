@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SOC Workbench · Nemotron CLI</title>
+  <meta name="description" content="Prepare investigation prompts locally for OpenCode and NVIDIA Nemotron.">
+  <link rel="stylesheet" href="styles.css">
+  <script src="workflows.js" defer></script><script src="core.js" defer></script><script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#workspace">Skip to prompt builder</a>
+<header><div class="brand"><span class="mark" aria-hidden="true">S/</span><div><strong>SOC WORKBENCH</strong><span class="subbrand">NEMOTRON CLI / THE SAFEHOUSE</span></div></div><span class="local">Local prompt preparation</span></header>
+<main id="workspace">
+  <aside aria-label="Workflow selection"><p class="eyebrow">01 / SELECT WORKFLOW</p><h1>Start with the<br>right question.</h1><p class="muted">Build a focused investigation prompt, then review it in OpenCode.</p><nav id="workflows" aria-label="Investigation workflows"></nav><div class="aside-note"><strong>Your data stays here.</strong><p>This workbench makes no API calls and saves no browser history of your inputs. Download or copy your prompt before closing.</p></div></aside>
+  <section class="builder" aria-labelledby="workflow-title"><div class="section-top"><p class="eyebrow">02 / ADD CONTEXT</p><span id="level" class="tag"></span></div><h2 id="workflow-title"></h2><p id="description" class="muted"></p>
+    <form id="context-form"><div id="fields"></div><label for="notes">Additional instructions <span class="optional">optional</span></label><textarea id="notes" rows="3" maxlength="4000" placeholder="Time window, environment, or a specific question…"></textarea></form>
+    <div class="secondary-actions"><button id="sample" type="button">Use sample inputs</button><button id="reset" type="button" class="quiet">Reset this workflow</button></div>
+    <div class="review"><h3>Review the result</h3><ul id="review-list"></ul></div>
+  </section>
+  <section class="output" aria-labelledby="preview-title"><div class="section-top"><p class="eyebrow">03 / REVIEW PROMPT</p><span id="readiness" class="tag">Add context</span></div><h2 id="preview-title">Analyst handoff</h2><p class="muted">Prompt text only. Nothing is executed here.</p><label class="sr-only" for="preview">Generated investigation prompt</label><textarea id="preview" readonly spellcheck="false"></textarea><div class="primary-actions"><button id="copy" type="button" class="primary" disabled>Copy prompt</button><button id="download" type="button" disabled>Download .md</button></div><p id="status" role="status" aria-live="polite"></p><details><summary>Run it with OpenCode</summary><ol><li>Open a terminal in your approved evidence folder.</li><li>Start <code>opencode</code> or <code>opencode web --hostname 127.0.0.1</code>.</li><li>Select your configured model and paste the prompt.</li><li>Review requested actions and verify the result against the evidence.</li></ol><p>Evidence files must exist in that workspace. The workbench does not read or upload them.</p></details></section>
+</main>
+<footer><span>AMIT AMBEKAR / SECURITY OPERATIONS</span><a href="https://github.com/amitambekar510/SOC-Nemotron-CLI-Linux" target="_blank" rel="noreferrer">Documentation ↗</a></footer>
+<noscript>This prompt builder needs JavaScript. You can also use the Markdown templates in examples/prompts.</noscript>
+</body></html>

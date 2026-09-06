@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+<title id="title">SOC-Nemotron-CLI — Analyst Workbench</title><desc id="desc">Prepare a focused prompt, review it in OpenCode, and verify the evidence.</desc>
+<style>.cursor{animation:blink 2.8s ease-in-out infinite}@keyframes blink{50%{opacity:.25}}@media(prefers-reduced-motion:reduce){.cursor{animation:none}}</style>
+<rect width="1200" height="300" rx="16" fill="#0b0f14"/><path d="M36 0h160" stroke="#35d0e0" stroke-width="4"/>
+<g font-family="DejaVu Sans Mono,Consolas,monospace"><text x="40" y="51" font-size="17" fill="#ffb020">THE SAFEHOUSE / LINUX EDITION</text><text x="40" y="117" font-size="47" font-weight="bold" fill="#e7eef4">SOC-Nemotron-CLI</text><text x="40" y="162" font-size="22" fill="#a9b6c5">Better context. Clearer questions.</text></g>
+<g font-family="Segoe UI,Arial,sans-serif" font-size="19"><text x="40" y="239" fill="#35d0e0">01 PREPARE</text><text x="240" y="239" fill="#ffb020">02 REVIEW</text><text x="430" y="239" fill="#35d0e0">03 VERIFY</text></g>
+<rect x="785" y="55" width="365" height="192" rx="8" fill="#111923" stroke="#293642"/><path d="M785 88h365" stroke="#293642"/><g font-family="DejaVu Sans Mono,monospace" font-size="18"><text x="808" y="78" font-size="13" fill="#a9b6c5">LOCAL PROMPT PREPARATION</text><text x="808" y="129" fill="#35d0e0">&gt; choose workflow</text><text x="808" y="168" fill="#e7eef4">&gt; add context</text><text x="808" y="207" fill="#ffb020">&gt; review prompt</text></g><path class="cursor" d="M985 213h14" stroke="#ffb020" stroke-width="3"/>
+</svg>
